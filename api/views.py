@@ -1,5 +1,6 @@
 from curses.ascii import HT
 import datetime
+from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
 from .serializers import RegisterSerializer, AppointmentSerializer
@@ -7,6 +8,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from api import serializers
+
 # Create your views here.   
 
 def Checker(Validated_data):
@@ -34,12 +37,9 @@ def getRoutes(request):
 
     routes = [
         {'GET': '/api/allAppointments/'},
-        {'GET': '/api/appointment/id/'},
         {'POST': '/api/scheduleAppointment/'},
-        {'PUT': '/api/appointment/id/'},
-        {'DELETE': '/api/appointment/id/'},
-
         {'POST': '/api/register/'},
+        
 
         {'POST': '/api/token/'},
         {'POST': '/api/token/refresh/'},
@@ -61,6 +61,25 @@ def sheduleAppointment(request):
             return Response(serializer.data) 
         else:
             return Response(serializer.errors)
+
+@api_view(['GET'])
+def upcomingAppointment(request):
+    storeupcomingAppointment = []
+    now = datetime.datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+
+    current_date = datetime.date.today()
+    
+    appointment = Appointment.objects.all()
+    
+    for guest in appointment:    
+        if current_time < guest.start_time.strftime("%H:%M:%S") or current_date < guest.date:
+            storeupcomingAppointment.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
+
+    data = {}
+    data['upcomingAppointment'] = storeupcomingAppointment
+
+    return Response(data)
 
 
 
