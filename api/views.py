@@ -28,23 +28,24 @@ def getRoutes(request):
 
 @api_view(['POST'])
 def register(request):
-    if request.method=='POST':
-        serializer = RegisterSerializer(data = request.data)
-        data = {}
-        if serializer.is_valid():
-            serializer.save() 
+    if request.method=='POST': # If the request is a POST request
+        serializer = RegisterSerializer(data = request.data) # serialize the POST data
+        data = {} # dictonary for generating access and refresh token when user is registered 
+        if serializer.is_valid(): # checking for validation of serializer
+            serializer.save() # save the changes to DataBase
 
-            data['response'] = "Registration Successful"
-            data['username'] = request.data['username']
+            #generating output when user will be registered
+            data['response'] = "Registration Successful" 
+            data['username'] = request.data['username'] 
             data['email'] = request.data['email']
             refresh = RefreshToken.for_user(User)
             data['token'] = {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                'refresh': str(refresh), #getting refresh token
+                'access': str(refresh.access_token), #getting access token
             }
 
         else:
-           data = serializer.errors
+           data = serializer.errors  #if serializer is not valid generating errors
 
-        return Response(data)
+        return Response(data) # getting Response as a Output
     
