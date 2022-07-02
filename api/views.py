@@ -72,9 +72,12 @@ def upcomingAppointment(request):
     
     appointment = Appointment.objects.all()
     
-    for guest in appointment:    
-        if current_time < guest.start_time.strftime("%H:%M:%S") or current_date < guest.date:
+    for guest in appointment:
+        if current_date < guest.date:
             storeupcomingAppointment.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
+        if current_date == guest.date:
+            if current_time < guest.start_time.strftime("%H:%M:%S"):
+                storeupcomingAppointment.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
 
     data = {}
     data['upcomingAppointment'] = storeupcomingAppointment
