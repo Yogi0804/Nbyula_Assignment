@@ -65,7 +65,7 @@ def sheduleAppointment(request):
 
 @api_view(['GET'])
 def upcomingAppointment(request):
-    l = []
+    storeupcomingAppointment = []
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
 
@@ -74,11 +74,11 @@ def upcomingAppointment(request):
     appointment = Appointment.objects.all()
     
     for guest in appointment:    
-        if current_time <= guest.start_time.strftime("%H:%M:%S") or current_date < guest.date:
-            l.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
+        if current_time < guest.start_time.strftime("%H:%M:%S") or current_date < guest.date:
+            storeupcomingAppointment.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
 
     data = {}
-    data['upcomingAppointment'] = l
+    data['upcomingAppointment'] = storeupcomingAppointment
 
     return Response(data)
 
