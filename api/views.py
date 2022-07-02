@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from api import serializers
+
 # Create your views here.   
 
 def Checker(Validated_data):
@@ -35,12 +37,9 @@ def getRoutes(request):
 
     routes = [
         {'GET': '/api/allAppointments/'},
-        {'GET': '/api/appointment/id/'},
         {'POST': '/api/scheduleAppointment/'},
-        {'PUT': '/api/appointment/id/'},
-        {'DELETE': '/api/appointment/id/'},
-
         {'POST': '/api/register/'},
+        
 
         {'POST': '/api/token/'},
         {'POST': '/api/token/refresh/'},
@@ -81,6 +80,7 @@ def upcomingAppointment(request):
     data['upcomingAppointment'] = storeupcomingAppointment
 
     return Response(data)
+
 
 
 
