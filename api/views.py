@@ -1,5 +1,6 @@
 from curses.ascii import HT
 import datetime
+from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
 from .serializers import RegisterSerializer, AppointmentSerializer
@@ -62,6 +63,24 @@ def sheduleAppointment(request):
         else:
             return Response(serializer.errors)
 
+@api_view(['GET'])
+def upcomingAppointment(request):
+    l = []
+    now = datetime.datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+
+    current_date = datetime.date.today()
+    
+    appointment = Appointment.objects.all()
+    
+    for guest in appointment:    
+        if current_time <= guest.start_time.strftime("%H:%M:%S") or current_date < guest.date:
+            l.append({"title":guest.title,"agenda":guest.agenda,"start_time":guest.start_time,"end_time":guest.end_time,"date":guest.date})
+
+    data = {}
+    data['upcomingAppointment'] = l
+
+    return Response(data)
 
 
 
