@@ -7,6 +7,7 @@ urlpatterns = [
     path('register/',views.register,name="register"),
     path('sheduleAppointment/',views.sheduleAppointment,name="shedule_appointment"),
     path('upcomingAppointment/',views.upcomingAppointment,name="upcomingAppointment"),
+    path('UpdateProfile/<int:pk>/',views.UpdateProfile,name="UpdateProfile"),
 
 
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

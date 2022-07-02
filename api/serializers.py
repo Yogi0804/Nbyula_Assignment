@@ -40,3 +40,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         account = User(email=self.validated_data['email'],username=self.validated_data['username'])
         account.set_password(password)
         account.save()
+
+
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+    class Meta:
+        model = User
+        fields = ['username','old_password','new_password','confirm_password']
+    
+    
+

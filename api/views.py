@@ -1,14 +1,16 @@
 from curses.ascii import HT
 import datetime
+import json
 from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer
+from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from api import serializers
+from django.http import QueryDict
 
 # Create your views here.   
 
@@ -39,6 +41,7 @@ def getRoutes(request):
         {'GET': '/api/allAppointments/'},
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
+        {'POST': '/api/UpdateProfile/id/'},
         
 
         {'POST': '/api/token/'},
@@ -110,3 +113,29 @@ def register(request):
 
         return Response(data) # getting Response as a Output
     
+
+@api_view(['PUT'])
+def UpdateProfile(request,pk):
+    if request.method == "PUT":
+        serializer = ProfileUpdateSerializer(data=request.data)
+        user = request.user
+        if serializer.is_valid():
+            # Check old password
+            if not user.check_password(serializer.validated_data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]})
+
+            if serializer.validated_data['new_password']!=serializer.validated_data['confirm_password']:
+                return Response({"message":"new password and confirm password doesn't match"})
+            # set_password also hashes the password that the user will get
+            user.set_password(serializer.validated_data.get("new_password"))
+            user.username = serializer.validated_data['username']
+
+            user.save()
+            response = {
+                    'status': 'success',
+                    'message': 'Username and Password updated successfully',
+                }
+
+            return Response(response)
+
+        return Response(serializer.errors)
