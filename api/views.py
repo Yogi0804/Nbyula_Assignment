@@ -2,10 +2,9 @@ from curses.ascii import HT
 import datetime
 import json
 from django.forms import ValidationError
-from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer,OffHourSerializer
+from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
