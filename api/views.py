@@ -1,37 +1,20 @@
 from curses.ascii import HT
 import datetime
+import json
+from django.forms import ValidationError
 from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer
+from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer,OffHourSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from api import serializers
+from django.http import QueryDict
+from .utils.util import checkAppoinment
 
 # Create your views here.   
-
-def Checker(Validated_data):
-    user_start_time,user_end_time,user_date,user_id = Validated_data
-    if (user_start_time > user_end_time):
-        return False
-
-    appointment = Appointment.objects.filter(guest=user_id)
-    if len(appointment) == 0:
-        return True
-
-    valid_count=0
-    for guest in appointment:
-        if ((user_start_time < guest.start_time and user_end_time<guest.start_time) or (user_start_time>guest.end_time and user_end_time>guest.end_time)) or (user_date>guest.date):
-            valid_count+=1
-
-    if len(appointment) == valid_count:
-        return True
-
-    return False
-
-
 @api_view(['GET'])
 def getRoutes(request):
 
@@ -39,6 +22,7 @@ def getRoutes(request):
         {'GET': '/api/allAppointments/'},
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
+        {'POST': '/api/UpdateProfile/id/'},
         
 
         {'POST': '/api/token/'},
@@ -51,16 +35,8 @@ def getRoutes(request):
 def sheduleAppointment(request):
     if request.method=='POST':
         serializer = AppointmentSerializer(data = request.data)
-        if serializer.is_valid():
-            check = Checker([serializer.validated_data['start_time'],serializer.validated_data['end_time'],serializer.validated_data['date'],serializer.validated_data['guest']])
-            if check:
-                serializer.validated_data['available'] = False
-                serializer.save()
-            else:
-                return HttpResponse("Time is not correct")
-            return Response(serializer.data) 
-        else:
-            return Response(serializer.errors)
+        return Response(checkAppoinment(serializer=serializer))
+        
 
 @api_view(['GET'])
 def upcomingAppointment(request):
@@ -110,3 +86,53 @@ def register(request):
 
         return Response(data) # getting Response as a Output
     
+
+@api_view(['PUT'])
+def UpdateProfile(request,pk):
+    if request.method == "PUT":
+        serializer = ProfileUpdateSerializer(data=request.data)
+        user = request.user
+        if serializer.is_valid():
+            # Check old password
+            if not user.check_password(serializer.validated_data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]})
+
+            if serializer.validated_data['new_password']!=serializer.validated_data['confirm_password']:
+                return Response({"message":"new password and confirm password doesn't match"})
+            # set_password also hashes the password that the user will get
+            user.set_password(serializer.validated_data.get("new_password"))
+            user.username = serializer.validated_data['username']
+
+            user.save()
+            response = {
+                    'status': 'success',
+                    'message': 'Username and Password updated successfully',
+                }
+
+            return Response(response)
+
+        return Response(serializer.errors)
+
+
+@api_view(['GET'])
+def allAppointments(request):
+    appointment = Appointment.objects.all() # generating a queryset
+    serializer = AppointmentSerializer(appointment,many=True) # serialize appointment queryset
+    return Response(serializer.data) # return as response 
+
+
+@api_view(['POST'])
+def offHours(request):
+    if request.method == "POST":
+        serializer = AppointmentSerializer(data = request.data)
+        offhour = {}
+        if serializer.is_valid():
+            serializer.validated_data['Username'] = request.user
+            serializer.validated_data['title'] = "offhours"
+            serializer.validated_data['agenda'] = "offhours"
+
+        return Response(checkAppoinment(serializer=serializer))
+
+
+
+
