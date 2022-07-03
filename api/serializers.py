@@ -1,7 +1,8 @@
-import email
 from rest_framework import serializers
+from rest_framework import serializers
+
 from .models import Appointment
-from django.contrib.auth.models import User
+
 
 # Appointment Serializer
 class AppointmentSerializer(serializers.ModelSerializer):

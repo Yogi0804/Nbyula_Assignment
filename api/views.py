@@ -1,22 +1,20 @@
-from curses.ascii import HT
 import datetime
-import json
-from django.forms import ValidationError
-from django.shortcuts import render, HttpResponse
-from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer, ProfileUpdateSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import RefreshToken
-from api import serializers
-from django.http import QueryDict
+
+from .models import Appointment
+from .serializers import RegisterSerializer, AppointmentSerializer, ProfileUpdateSerializer
 from .utils.util import checkAppoinment
 
 
 # Create your views here.
 @api_view(['GET'])
 def getRoutes(request):
+    """This function get all Routes
+
+        :param request
+        :returns: Response
+    """
     routes = [
         {"GET": '/api/'},
         {'GET': '/api/allAppointments/'},
@@ -35,6 +33,13 @@ def getRoutes(request):
 
 @api_view(['POST'])
 def sheduleAppointment(request):
+    """This function shedule an Appointment
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
+
     if request.method == 'POST':
         serializer = AppointmentSerializer(data=request.data)
         return Response(checkAppoinment(serializer=serializer))
@@ -42,6 +47,12 @@ def sheduleAppointment(request):
 
 @api_view(['GET'])
 def upcomingAppointment(request):
+    """This function get a upcoming Appointment
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
     storeupcomingAppointment = []
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
@@ -69,6 +80,13 @@ def upcomingAppointment(request):
 
 @api_view(['POST'])
 def register(request):
+    """This function register a user
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
+
     if request.method == 'POST':  # If the request is a POST request
         serializer = RegisterSerializer(data=request.data)  # serialize the POST data
         data = {}  # dictonary for generating access and refresh token when user is registered
@@ -88,6 +106,12 @@ def register(request):
 
 @api_view(['POST'])
 def UpdateProfile(request):
+    """This function Updates a user Profile
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
     if request.method == "POST":
         serializer = ProfileUpdateSerializer(data=request.data)
         user = request.user
@@ -115,6 +139,13 @@ def UpdateProfile(request):
 
 @api_view(['GET'])
 def allAppointments(request):
+    """This function get all Appointments
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
+
     appointment = Appointment.objects.all()  # generating a queryset
     serializer = AppointmentSerializer(appointment, many=True)  # serialize appointment queryset
     return Response(serializer.data)  # return as response
@@ -122,6 +153,12 @@ def allAppointments(request):
 
 @api_view(['POST'])
 def offHours(request):
+    """This function submit offHours for a user
+
+        :param request
+        :raises: `ValidationError`
+        :returns: Response
+    """
     if request.method == "POST":
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
@@ -134,6 +171,11 @@ def offHours(request):
 
 @api_view(['DELETE'])
 def deleteAppointment(request, pk):
+    """This function deletes an Appointment
+
+        :param request and primary key:
+        :returns: Response
+    """
     data = {}
     if request.method == "DELETE":
         try:
