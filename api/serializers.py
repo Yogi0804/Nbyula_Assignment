@@ -54,3 +54,6 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     
     
 
+class OffHourSerializer(serializers.Serializer):
+    offhours_start_time = serializers.TimeField()
+    offhours_end_time = serializers.TimeField()

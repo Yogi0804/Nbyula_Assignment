@@ -1,39 +1,20 @@
 from curses.ascii import HT
 import datetime
 import json
+from django.forms import ValidationError
 from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer
+from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer,OffHourSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from api import serializers
 from django.http import QueryDict
+from .utils.util import checkAppoinment
 
 # Create your views here.   
-
-def Checker(Validated_data):
-    user_start_time,user_end_time,user_date,user_id = Validated_data
-    if (user_start_time > user_end_time):
-        return False
-
-    appointment = Appointment.objects.filter(guest=user_id)
-    if len(appointment) == 0:
-        return True
-
-    valid_count=0
-    for guest in appointment:
-        if ((user_start_time < guest.start_time and user_end_time<guest.start_time) or (user_start_time>guest.end_time and user_end_time>guest.end_time)) or (user_date>guest.date):
-            valid_count+=1
-
-    if len(appointment) == valid_count:
-        return True
-
-    return False
-
-
 @api_view(['GET'])
 def getRoutes(request):
 
@@ -54,16 +35,8 @@ def getRoutes(request):
 def sheduleAppointment(request):
     if request.method=='POST':
         serializer = AppointmentSerializer(data = request.data)
-        if serializer.is_valid():
-            check = Checker([serializer.validated_data['start_time'],serializer.validated_data['end_time'],serializer.validated_data['date'],serializer.validated_data['guest']])
-            if check:
-                serializer.validated_data['available'] = False
-                serializer.save()
-            else:
-                return HttpResponse("Time is not correct")
-            return Response(serializer.data) 
-        else:
-            return Response(serializer.errors)
+        return Response(checkAppoinment(serializer=serializer))
+        
 
 @api_view(['GET'])
 def upcomingAppointment(request):
@@ -139,3 +112,27 @@ def UpdateProfile(request,pk):
             return Response(response)
 
         return Response(serializer.errors)
+
+
+@api_view(['GET'])
+def allAppointments(request):
+    appointment = Appointment.objects.all() # generating a queryset
+    serializer = AppointmentSerializer(appointment,many=True) # serialize appointment queryset
+    return Response(serializer.data) # return as response 
+
+
+@api_view(['POST'])
+def offHours(request):
+    if request.method == "POST":
+        serializer = AppointmentSerializer(data = request.data)
+        offhour = {}
+        if serializer.is_valid():
+            serializer.validated_data['Username'] = request.user
+            serializer.validated_data['title'] = "offhours"
+            serializer.validated_data['agenda'] = "offhours"
+
+        return Response(checkAppoinment(serializer=serializer))
+
+
+
+
