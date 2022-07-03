@@ -2,10 +2,16 @@ from django.http import HttpResponse
 import datetime
 from api.models import Appointment
 
-def Validator(Validated_data): # This is a function for Validate time and date Field
-    """
-    
-    """
+
+def Validator(Validated_data):
+    '''This function Validate time and date Field
+
+        :param Validated_data: contains : start_time, end_time, date, id
+        :raises: `ValidationError`
+        :returns: Response
+        :rtype: Object
+    '''  
+
     user_start_time,user_end_time,user_date,user_id = Validated_data # Extracting data
 
     now = datetime.datetime.now()
