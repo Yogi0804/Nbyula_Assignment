@@ -10,7 +10,7 @@ urlpatterns = [
     path('UpdateProfile/<int:pk>/',views.UpdateProfile,name="update_profile"),
     path('allAppointments/',views.allAppointments,name="all_appointments"),
     path('offHours/',views.offHours,name="off_hours"),
-    path('deleteUser/<int:pk>/',views.deleteUser,name="delete_user"),
+    path('deleteAppointment/<int:pk>/',views.deleteAppointment,name="delet_appointment"),
 
 
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
