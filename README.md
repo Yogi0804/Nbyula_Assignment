@@ -94,7 +94,7 @@ django-admin startproject <your-project-name> .
 ```
 
 ## Deployed
-
+- You can use the URL below
 - [Meet-terraformers](https://meet-terraformers.herokuapp.com)
 
 > Note: `add /api/ in the end of routes` is required for Routes.
