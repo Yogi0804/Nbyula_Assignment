@@ -18,12 +18,13 @@ from .utils.util import checkAppoinment
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
+        {"GET": '/api/'},
         {'GET': '/api/allAppointments/'},
+        {"GET": '/api/upcomingAppointment/'},
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
+        {'POST': '/api/UpdateProfile/id/'},
         {"DELETE": '/api/deleteAppointment/id/'},
-        {'PUT': '/api/UpdateProfile/id/'},
-        {"GET": '/api/upcomingAppointment/'},
 
         {'POST': '/api/token/'},
         {'POST': '/api/token/refresh/'},
@@ -84,9 +85,9 @@ def register(request):
         return Response(data)  # getting Response as a Output
 
 
-@api_view(['PUT'])
-def UpdateProfile(request, pk):
-    if request.method == "PUT":
+@api_view(['POST'])
+def UpdateProfile(request):
+    if request.method == "POST":
         serializer = ProfileUpdateSerializer(data=request.data)
         user = request.user
         if serializer.is_valid():
