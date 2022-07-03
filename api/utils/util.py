@@ -4,13 +4,12 @@ from api.models import Appointment
 
 
 def Validator(Validated_data):
-    '''This function Validate time and date Field
+    """This function Validate time and date Field
 
         :param Validated_data: contains : start_time, end_time, date, id
         :raises: `ValidationError`
         :returns: Response
-        :rtype: Object
-    '''  
+    """
 
     user_start_time,user_end_time,user_date,user_id = Validated_data # Extracting data
 
@@ -52,6 +51,12 @@ def Validator(Validated_data):
 
 
 def checkAppoinment(serializer):
+    """This function check appoinments are valid or not
+
+        :param serializer
+        :raises: `ValidationError`
+        :returns: dictionary
+    """
     if serializer.is_valid():
         check,error = Validator([serializer.validated_data['start_time'],serializer.validated_data['end_time'],serializer.validated_data['date'],serializer.validated_data['guest']])
         if error is not None:
