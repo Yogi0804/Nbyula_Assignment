@@ -1,5 +1,4 @@
 import datetime
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -40,6 +39,7 @@ def sheduleAppointment(request):
         :raises: `ValidationError`
         :returns: Response
     """
+
     if request.method == 'POST':
         serializer = AppointmentSerializer(data=request.data)
         return Response(checkAppoinment(serializer=serializer))
@@ -86,6 +86,7 @@ def register(request):
         :raises: `ValidationError`
         :returns: Response
     """
+
     if request.method == 'POST':  # If the request is a POST request
         serializer = RegisterSerializer(data=request.data)  # serialize the POST data
         data = {}  # dictonary for generating access and refresh token when user is registered
@@ -144,6 +145,7 @@ def allAppointments(request):
         :raises: `ValidationError`
         :returns: Response
     """
+
     appointment = Appointment.objects.all()  # generating a queryset
     serializer = AppointmentSerializer(appointment, many=True)  # serialize appointment queryset
     return Response(serializer.data)  # return as response

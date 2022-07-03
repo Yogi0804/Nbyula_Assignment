@@ -97,7 +97,6 @@ django-admin startproject <your-project-name> .
 ## Schema
 ![drawSQL-export-2022-07-03_19_50](Image/schema.png)
 
-
 ## Deployed
 - You can use the URL below
 - [Meet-terraformers](https://meet-terraformers.herokuapp.com)
