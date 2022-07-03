@@ -26,12 +26,14 @@ Meet is a django based application for making schedule
 ## Routes
 
 ```sh
+        'GET': '/api/'
         'GET': '/api/allAppointments/'
         'GET': '/api/upcomingAppointment/'
         'POST': '/api/scheduleAppointment/'
         'POST': '/api/register/'
-        'POST': '/api/UpdateProfile/id/'
+        'POST': '/api/UpdateProfile/'
         'POST': '/api/offHours/'
+        "DELETE": '/api/deleteAppointment/id/'
 
         'POST': '/api/token/'
         'POST': '/api/token/refresh/'

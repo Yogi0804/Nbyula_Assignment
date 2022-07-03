@@ -24,6 +24,7 @@ def getRoutes(request):
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
         {'POST': '/api/UpdateProfile/'},
+        {'POST': '/api/offHours/'},
         {"DELETE": '/api/deleteAppointment/id/'},
 
         {'POST': '/api/token/'},
