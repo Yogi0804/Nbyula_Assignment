@@ -8,7 +8,7 @@ def Validator(Validated_data): # This is a function for Validate time and date F
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
 
-    if current_time > user_start_time:
+    if current_time > user_start_time.strftime("%H:%M:%S"):
         return [False,{"ERROR":'Entered time is lesser than Current time'}]
 
     current_date = datetime.date.today() # Current Date
