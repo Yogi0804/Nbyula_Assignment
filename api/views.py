@@ -74,12 +74,7 @@ def register(request):
             data['response'] = "Registration Successful" 
             data['username'] = request.data['username'] 
             data['email'] = request.data['email']
-            refresh = RefreshToken.for_user(User)
-            data['token'] = {
-                'refresh': str(refresh), #getting refresh token
-                'access': str(refresh.access_token), #getting access token
-            }
-
+            
         else:
            data = serializer.errors  #if serializer is not valid generating errors
 
