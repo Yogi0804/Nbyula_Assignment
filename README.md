@@ -93,8 +93,14 @@ django-admin startproject <your-project-name> .
     confirm_password: <your new password>
 ```
 
+
+## Schema
+![drawSQL-export-2022-07-03_19_50](Image/schema.png)
+
+
 ## Deployed
 - You can use the URL below
 - [Meet-terraformers](https://meet-terraformers.herokuapp.com)
 
 > Note: `add /api/ in the end of routes` is required for Routes.
+
