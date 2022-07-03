@@ -22,6 +22,7 @@ def getRoutes(request):
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
         {'POST': '/api/UpdateProfile/id/'},
+        {'DELETE': '/api/deleteUser/id/'},
         
 
         {'POST': '/api/token/'},
@@ -128,5 +129,16 @@ def offHours(request):
         return Response(checkAppoinment(serializer=serializer))
 
 
+@api_view(['DELETE'])
+def deleteUser(request,pk):
+    data = {}
+    if request.method == "DELETE":
+        user = User.objects.get(id=pk)
+        username = user.username
+        user.delete()
+        data['response'] = f"Deleted {username} User Successful"
 
+        return Response(data)
+    
+    return Response(data)
 
