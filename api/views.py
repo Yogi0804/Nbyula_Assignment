@@ -2,10 +2,9 @@ from curses.ascii import HT
 import datetime
 import json
 from django.forms import ValidationError
-from operator import itemgetter
 from django.shortcuts import render,HttpResponse
 from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer,OffHourSerializer
+from .serializers import RegisterSerializer, AppointmentSerializer,ProfileUpdateSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -22,8 +21,10 @@ def getRoutes(request):
         {'GET': '/api/allAppointments/'},
         {'POST': '/api/scheduleAppointment/'},
         {'POST': '/api/register/'},
+
         {'PUT': '/api/UpdateProfile/id/'},
         {"GET":  '/api/upcomingAppointment/'},
+
 
         {'POST': '/api/token/'},
         {'POST': '/api/token/refresh/'},
@@ -75,12 +76,7 @@ def register(request):
             data['response'] = "Registration Successful" 
             data['username'] = request.data['username'] 
             data['email'] = request.data['email']
-            refresh = RefreshToken.for_user(User)
-            data['token'] = {
-                'refresh': str(refresh), #getting refresh token
-                'access': str(refresh.access_token), #getting access token
-            }
-
+            
         else:
            data = serializer.errors  #if serializer is not valid generating errors
 
@@ -134,5 +130,16 @@ def offHours(request):
         return Response(checkAppoinment(serializer=serializer))
 
 
+@api_view(['DELETE'])
+def deleteUser(request,pk):
+    data = {}
+    if request.method == "DELETE":
+        user = User.objects.get(id=pk)
+        username = user.username
+        user.delete()
+        data['response'] = f"Deleted {username} User Successful"
 
+        return Response(data)
+    
+    return Response(data)
 

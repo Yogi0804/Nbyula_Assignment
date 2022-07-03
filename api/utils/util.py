@@ -2,6 +2,7 @@ from django.http import HttpResponse
 import datetime
 from api.models import Appointment
 
+
 def Validator(Validated_data):
     '''This function Validate time and date Field
 
@@ -10,9 +11,17 @@ def Validator(Validated_data):
         :returns: Response
         :rtype: Object
     '''  
+
     user_start_time,user_end_time,user_date,user_id = Validated_data # Extracting data
 
+    now = datetime.datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+
     current_date = datetime.date.today() # Current Date
+    
+    if current_date == user_date:
+        if current_time > user_start_time.strftime("%H:%M:%S"):
+            return [False,{"ERROR":'Entered time is lesser than Current time'}]
 
     if current_date > user_date: # No past Date Allowed 
         return [False,{"ERROR":'Entered date is lesser than Current Date'}]
