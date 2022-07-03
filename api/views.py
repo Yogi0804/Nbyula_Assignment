@@ -1,16 +1,10 @@
-from curses.ascii import HT
 import datetime
-import json
-from django.forms import ValidationError
-from django.shortcuts import render, HttpResponse
-from .models import Appointment
-from .serializers import RegisterSerializer, AppointmentSerializer, ProfileUpdateSerializer
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import RefreshToken
-from api import serializers
-from django.http import QueryDict
+
+from .models import Appointment
+from .serializers import RegisterSerializer, AppointmentSerializer, ProfileUpdateSerializer
 from .utils.util import checkAppoinment
 
 
