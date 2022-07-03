@@ -53,7 +53,3 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         fields = ['username','old_password','new_password','confirm_password']
     
     
-
-class OffHourSerializer(serializers.Serializer):
-    offhours_start_time = serializers.TimeField()
-    offhours_end_time = serializers.TimeField()
